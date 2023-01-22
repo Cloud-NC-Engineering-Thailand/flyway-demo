@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: flyway
+spec:
+  ttlSecondsAfterFinished: 90
+  backoffLimit: 3
+  template:
+    metadata: 
+      name: flyway
+    spec:
+      containers:
+        - name: flyway
+          image: dmakeroam/flyway:customer-1.0.0
+          command: ["flyway", "migrate"]
+          volumeMounts:
+            - name: flyway-config-volume
+              mountPath: /flyway/conf
+      volumes:
+        - name: flyway-config-volume
+          secret:
+              secretName: flyway-config
+      restartPolicy: Never
